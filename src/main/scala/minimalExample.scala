@@ -9,7 +9,7 @@ import org.scalacheck.rng.Seed
 object minimalExample extends App {
 
   type A = Int
-  type B = Option[Vector[Option[Int]]]
+  type B = Vector[Option[Int]]
   type T = (A, B)
 
   val conf: SparkConf = new SparkConf()
