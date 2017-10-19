@@ -24,7 +24,7 @@ object minimalExample extends App {
     .apply(Gen.Parameters.default, Seed(0L))
     .foreach((samples: List[T]) => {
       val tds: TypedDataset[T] = TypedDataset.create(samples)
-      val u = tds.makeUDF[B, Tuple1[B]](Tuple1.apply)
+      val u = tds.makeUDF[B, B](identity)
       tds
         .groupBy(tds('_1))
         .agg(collectList(u(tds('_2))))
