@@ -1,5 +1,6 @@
 lazy val sparkVersion = "2.2.0"
 lazy val framelessVersion = "0.4.0"
+lazy val scalaCheckVersion = "1.13.+"
 
 lazy val root = project
   .in(file("."))
@@ -19,7 +20,8 @@ lazy val minimalExampleSettings = Seq(
   libraryDependencies ++= Seq(
     "org.typelevel" %% "frameless-dataset" % framelessVersion,
     "org.apache.spark" %% "spark-core" % sparkVersion,
-    "org.apache.spark" %% "spark-sql" % sparkVersion
+    "org.apache.spark" %% "spark-sql" % sparkVersion,
+    "org.scalacheck" %% "scalacheck" % scalaCheckVersion
   ),
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
