@@ -19,18 +19,26 @@ object minimalExample extends App {
 
   implicit val sqlContext: SQLContext = spark.sqlContext
 
-  Gen
+  val samples: Option[List[(A, B)]] = Gen
     .listOfN[T](50, Arbitrary.arbitrary[T])
     .apply(Gen.Parameters.default, Seed(0L))
-    .foreach((samples: List[T]) => {
-      val tds: TypedDataset[T] = TypedDataset.create(samples)
-      val u = tds.makeUDF[B, B](identity)
-      tds
-        .groupBy(tds('_1))
-        .agg(collectList(u(tds('_2))))
-        .show()
-        .run()
-    })
+
+  val res: Option[Seq[(A, Vector[B])]] =
+    samples
+      .map(TypedDataset.create(_))
+      .map((tds: TypedDataset[T]) => {
+        val u = tds.makeUDF[B, B](identity)
+        tds
+          .groupBy(tds('_1))
+          .agg(collectList(u(tds('_2))))
+          .collect()
+          .run()
+      })
+
+  val exp: Option[Map[A, Vector[B]]] =
+    samples.map(_.groupBy(_._1).mapValues(_.map(_._2).toVector))
+
+  assert(res.map(_.toMap) == exp)
 
   spark.stop
 }
